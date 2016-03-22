@@ -5,6 +5,6 @@
         android:title="Item"
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:icon="@drawable/ic_menu_camera"
+        android:icon="@drawable/ic_nav_add"
         app:showAsAction="always" />
 </menu>
