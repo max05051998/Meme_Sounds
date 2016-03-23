@@ -1,5 +1,6 @@
 package ch.company.ameno.meme_sounds;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,8 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -87,6 +92,7 @@ public class MainActivity extends AppCompatActivity
             RelativeLayout container = (RelativeLayout) findViewById(R.id.container);
             container.removeAllViews();
             inflater.inflate(R.layout.content_about, container);
+            loadDataFromAsset("Koala.jpg", "Penguins.jpg");
 
         }
 
@@ -97,4 +103,34 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    public void loadDataFromAsset(String PictureNameHaP, String PictureNameStM ) {
+        ImageView ImageHaP = (ImageView)findViewById(R.id.HaP_Image);
+        ImageView ImageStM = (ImageView)findViewById(R.id.StM_Image);
+
+        // load image
+        try {
+            // get input stream
+            InputStream ims = getAssets().open(PictureNameHaP);
+            // load image as Drawable
+            Drawable dHaP = Drawable.createFromStream(ims, null);
+            //close imput stream
+            ims.close();
+            // set image to ImageView
+            ImageHaP.setImageDrawable(dHaP);
+
+            // get input stream
+            InputStream ims2 = getAssets().open(PictureNameStM);
+            // load image as Drawable
+            Drawable dStM = Drawable.createFromStream(ims2, null);
+            //close imput stream
+            ims2.close();
+            // set image to ImageView
+            ImageStM.setImageDrawable(dStM);
+
+        }
+        catch(IOException ex) {
+            return;
+        }
+
+    }
 }

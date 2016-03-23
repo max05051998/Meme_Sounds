@@ -6,11 +6,42 @@
     android:weightSum="1">
 
     <TextView
-        android:layout_width="403dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Hello! We are Patrick and Max and this is our Project we created for the BBC. We go to the Gibb in Bern and are in our second year of our apprenticeship."
         android:id="@+id/textViewAbout"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.17"
-        android:textSize="20dp" />
+        android:textSize="20dp"
+        android:layout_margin="5dp" />
+
+
+
+    <ImageView
+        android:id="@+id/HaP_Image"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center_horizontal"
+        />
+    <TextView
+        android:text="Email: patrick.haldemann@iet-gibb.ch"
+        android:layout_below ="@id/HaP_Image"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+
+        />
+
+    <ImageView
+        android:id="@+id/StM_Image"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center_horizontal" />
+    <TextView
+        android:text="Email: max.steiger@iet-gibb.ch"
+        android:layout_below ="@id/StM_Image"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        />
+
 </LinearLayout>
