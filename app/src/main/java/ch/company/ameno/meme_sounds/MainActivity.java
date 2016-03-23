@@ -15,12 +15,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -82,7 +88,11 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-
+            LayoutInflater inflater = getLayoutInflater();
+            RelativeLayout container = (RelativeLayout) findViewById(R.id.container);
+            container.removeAllViews();
+            inflater.inflate(R.layout.content_home, container);
+            generateButtons();
         }
         else if (id == R.id.nav_myButtons) {
 
@@ -102,6 +112,45 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    public void generateButtons(){
+        ArrayList<String> soundList = listAssetFiles("sounds");
+        String[] list = soundList.toArray(new String[soundList.size()]);
+
+        for (String file: list) {
+            Button myButton = new Button(this);
+            myButton.setText(file);
+
+            LinearLayout ll = (LinearLayout)findViewById(R.id.buttonlayout);
+
+            ll.addView(myButton);
+        }
+
+
+    }
+
+
+    private ArrayList listAssetFiles(String path) {
+        ArrayList<String> soundList = new ArrayList<>();
+        String[] list = null;
+        try {
+            list = getAssets().list(path);
+
+            soundList = new ArrayList<>();
+            for (int i = 0; i< list.length; i++)
+            {
+                if(list[i].endsWith("mp3")) {
+                    soundList.add(list[i].substring(0, list[i].lastIndexOf('.')));
+                }
+            }
+        }
+         catch (IOException e) {
+
+         }
+        return soundList;
+    }
+
+
 
     public void loadDataFromAsset(String PictureNameHaP, String PictureNameStM ) {
         ImageView ImageHaP = (ImageView)findViewById(R.id.HaP_Image);
