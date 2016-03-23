@@ -1,6 +1,9 @@
 package ch.company.ameno.meme_sounds;
 
+import android.content.DialogInterface;
+import android.content.res.AssetFileDescriptor;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -116,9 +119,32 @@ public class MainActivity extends AppCompatActivity
     public void generateButtons(){
         ArrayList<String> soundList = listAssetFiles("sounds");
         String[] list = soundList.toArray(new String[soundList.size()]);
+        final MediaPlayer mp = new MediaPlayer();
+        for (final String file: list) {
 
-        for (String file: list) {
             Button myButton = new Button(this);
+            myButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(mp.isPlaying())
+                    {
+                        mp.stop();
+                    }
+                    try {
+                        mp.reset();
+                        AssetFileDescriptor afd;
+                        afd = getAssets().openFd("sounds/" +file+".mp3");
+                        mp.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
+                        mp.prepare();
+                        mp.start();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            });
             myButton.setText(file);
 
             LinearLayout ll = (LinearLayout)findViewById(R.id.buttonlayout);
