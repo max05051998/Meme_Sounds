@@ -98,7 +98,11 @@ public class MainActivity extends AppCompatActivity
             generateButtons();
         }
         else if (id == R.id.nav_myButtons) {
-
+            LayoutInflater inflater = getLayoutInflater();
+            RelativeLayout container = (RelativeLayout) findViewById(R.id.container);
+            container.removeAllViews();
+            inflater.inflate(R.layout.content_mybuttons, container);
+            generateMyButtons();
         }
         else if (id == R.id.nav_about) {
             LayoutInflater inflater = getLayoutInflater();
@@ -156,6 +160,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
+
     private ArrayList listAssetFiles(String path) {
         ArrayList<String> soundList = new ArrayList<>();
         String[] list = null;
@@ -176,6 +181,66 @@ public class MainActivity extends AppCompatActivity
         return soundList;
     }
 
+    public void generateMyButtons(){
+        ArrayList<String> soundList = listAssetFilesMyButtons("sounds");
+        String[] list = soundList.toArray(new String[soundList.size()]);
+        final MediaPlayer mp = new MediaPlayer();
+        for (final String file: list) {
+
+            Button myButton = new Button(this);
+            myButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(mp.isPlaying())
+                    {
+                        mp.stop();
+                    }
+                    try {
+                        mp.reset();
+                        AssetFileDescriptor afd;
+                        afd = getAssets().openFd("sounds/" +file+".mp3");
+                        mp.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
+                        mp.prepare();
+                        mp.start();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+            myButton.setText(file);
+
+            LinearLayout ll = (LinearLayout)findViewById(R.id.buttonlayout);
+
+            ll.addView(myButton);
+        }
+
+
+    }
+
+
+
+    private ArrayList listAssetFilesMyButtons(String path){
+        ArrayList<String> soundList = new ArrayList<>();
+        String[] list = null;
+        try {
+            list = getAssets().list(path);
+
+            soundList = new ArrayList<>();
+            for (int i = 0; i< list.length; i++)
+            {
+                if(list[i].endsWith("_myButtons.mp3")) {
+                    soundList.add(list[i].substring(0, list[i].lastIndexOf('.')));
+                }
+            }
+        }
+        catch (IOException e) {
+
+        }
+        return soundList;
+    }
 
 
     public void loadDataFromAsset(String PictureNameHaP, String PictureNameStM ) {
