@@ -21,6 +21,7 @@ public class RecordAudioActivity extends Activity {
     private Button btnRecordStart;
     private Button btnPlay;
     private Button btnStopPlay;
+    private Button btnRecordStop;
     private TextView mRecordStatus;
 
     @Override
