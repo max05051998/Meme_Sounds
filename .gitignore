@@ -6,3 +6,5 @@
 .DS_Store
 /build
 /captures
+app/src/main/java/ch/company/ameno/meme_sounds/RecordAudioActivity.java
+app/src/main/java/ch/company/ameno/meme_sounds/MainActivity.java
