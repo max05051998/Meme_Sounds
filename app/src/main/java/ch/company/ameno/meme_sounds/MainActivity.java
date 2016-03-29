@@ -77,12 +77,6 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Log.v("memeSounds", "Camera pressed");
-            return true;
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -275,6 +269,9 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public void addButton(View view) {
+    public boolean addButton(MenuItem item) {
+        Intent intent = new Intent(this, RecordAudioActivity.class);
+        this.startActivity(intent);
+        return true;
     }
 }

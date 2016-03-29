@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -21,6 +22,7 @@ public class RecordAudioActivity extends Activity {
     private Button btnRecordStart;
     private Button btnPlay;
     private Button btnStopPlay;
+    private Button btnRecordStop;
     private TextView mRecordStatus;
 
     @Override
