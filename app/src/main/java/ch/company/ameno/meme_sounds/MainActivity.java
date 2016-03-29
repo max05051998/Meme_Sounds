@@ -54,6 +54,12 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        LayoutInflater inflater = getLayoutInflater();
+        RelativeLayout container = (RelativeLayout) findViewById(R.id.container);
+        container.removeAllViews();
+        inflater.inflate(R.layout.content_home, container);
+        generateButtons();
     }
 
     @Override

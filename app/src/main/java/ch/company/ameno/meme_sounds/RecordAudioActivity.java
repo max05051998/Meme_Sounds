@@ -24,6 +24,7 @@ public class RecordAudioActivity extends Activity {
     private ImageButton btnSave;
     private TextView mRecordStatus;
     private boolean isRecording = false;
+    private boolean isPlaying = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +32,10 @@ public class RecordAudioActivity extends Activity {
         setContentView(R.layout.activity_audio);
 
         mRecordStatus = (TextView) findViewById(R.id.tv_recordStatus);
+        mRecordStatus.setText("Record status: Waiting for input");
 
         // store it to sd card
-        outputFile = Environment.getExternalStorageDirectory().
-                getAbsolutePath() + "/sampleAudioRecord.3gpp";
+        outputFile =  getFilesDir().getAbsolutePath() + "/sampleAudioRecord.3gpp";
 
         mMediaRecorder = new MediaRecorder();
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -79,53 +80,52 @@ public class RecordAudioActivity extends Activity {
                 mMediaRecorder.prepare();
                 mMediaRecorder.start();
                 isRecording = true;
+                btnPlay.setEnabled(false);
+                btnSave.setEnabled(false);
+
             } catch (IllegalStateException e) {
                 e.printStackTrace();
             } catch (IOException e) {
-
                 e.printStackTrace();
             }
-            mRecordStatus.setText("Record status: Recording");
-            btnRecordStart.setEnabled(false);
-            btnSave.setEnabled(true);
+            mRecordStatus.setText("Record status: Recording!");
         }
 
         else {
             try {
                 mMediaRecorder.stop();
-                mMediaRecorder.release();
-                mMediaRecorder  = null;
-                isRecording = false;
-
-                btnSave.setEnabled(false);
-                btnPlay.setEnabled(true);
                 mRecordStatus.setText("Record status: Stopped recording");
             } catch (IllegalStateException e) {
                 e.printStackTrace();
             } catch (RuntimeException e) {
                 e.printStackTrace();
             }
+            isRecording = false;
+            btnPlay.setEnabled(true);
+            btnSave.setEnabled(true);
         }
 
 
     }
 
     public void play(View view) {
-        try{
-            mPlayer = new MediaPlayer();
-            mPlayer.setDataSource(outputFile);
-            mPlayer.prepare();
-            mPlayer.start();
+        if (!isPlaying) {
+            try {
+                mPlayer = new MediaPlayer();
+                mPlayer.setDataSource(outputFile);
+                mPlayer.prepare();
+                mPlayer.start();
 
-            btnPlay.setEnabled(false);
-            btnSave.setEnabled(true);
-            mRecordStatus.setText("Record status: Playing audio");
-
-
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+                mRecordStatus.setText("Record status: Playing audio");
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        } else {
+            mPlayer.stop();
+            mRecordStatus.setText("Record status: Stopped playing");
         }
+        mRecordStatus.setText("Record status: Waiting for input");
     }
 
     public void save(View view) {
@@ -134,8 +134,6 @@ public class RecordAudioActivity extends Activity {
                 mPlayer.stop();
                 mPlayer.release();
                 mPlayer = null;
-                btnPlay.setEnabled(true);
-                btnSave.setEnabled(false);
                 mRecordStatus.setText("Record status: saved Button");
 
 

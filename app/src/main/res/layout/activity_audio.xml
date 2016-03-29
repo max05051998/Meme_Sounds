@@ -65,7 +65,7 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/editText"
+        android:id="@+id/buttonName"
         android:layout_above="@+id/linear1"
         android:layout_alignStart="@+id/tv_recordStatus"
         android:layout_alignParentEnd="true"
