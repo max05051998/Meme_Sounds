@@ -1,6 +1,7 @@
 package ch.company.ameno.meme_sounds;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -18,7 +19,6 @@ public class RecordAudioActivity extends Activity {
     private MediaPlayer mPlayer;
     private String outputFile = null;
     private Button btnRecordStart;
-    private Button btnRecordStop;
     private Button btnPlay;
     private Button btnStopPlay;
     private TextView mRecordStatus;

@@ -1,6 +1,7 @@
 package ch.company.ameno.meme_sounds;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
@@ -19,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -244,8 +246,8 @@ public class MainActivity extends AppCompatActivity
 
 
     public void loadDataFromAsset(String PictureNameHaP, String PictureNameStM ) {
-        ImageView ImageHaP = (ImageView)findViewById(R.id.HaP_Image);
-        ImageView ImageStM = (ImageView)findViewById(R.id.StM_Image);
+        ImageView ImageHaP = (ImageView) findViewById(R.id.HaP_Image);
+        ImageView ImageStM = (ImageView) findViewById(R.id.StM_Image);
 
         // load image
         try {
@@ -267,10 +269,12 @@ public class MainActivity extends AppCompatActivity
             // set image to ImageView
             ImageStM.setImageDrawable(dStM);
 
-        }
-        catch(IOException ex) {
+        } catch (IOException ex) {
             return;
         }
 
+    }
+
+    public void addButton(View view) {
     }
 }
