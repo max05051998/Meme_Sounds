@@ -19,11 +19,11 @@ public class RecordAudioActivity extends Activity {
     private MediaRecorder mMediaRecorder;
     private MediaPlayer mPlayer;
     private String outputFile = null;
-    private Button btnRecordStart;
-    private Button btnPlay;
-    private Button btnStopPlay;
-    private Button btnRecordStop;
+    private ImageButton btnRecordStart;
+    private ImageButton btnPlay;
+    private ImageButton btnSave;
     private TextView mRecordStatus;
+    private boolean isRecording = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,27 +42,17 @@ public class RecordAudioActivity extends Activity {
         mMediaRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
         mMediaRecorder.setOutputFile(outputFile);
 
-        btnRecordStart = (Button)findViewById(R.id.start);
+        btnRecordStart = (ImageButton)findViewById(R.id.record);
         btnRecordStart.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                start(v);
+                record(v);
             }
         });
 
-//        btnRecordStop = (Button)findViewById(R.id.stop);
-//        btnRecordStop.setOnClickListener(new OnClickListener() {
-//
-//            @Override
-//            public void onClick(View v) {
-//                // TODO Auto-generated method stub
-//                stop(v);
-//            }
-//        });
-
-        btnPlay = (Button)findViewById(R.id.play);
+        btnPlay = (ImageButton)findViewById(R.id.play);
         btnPlay.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -72,51 +62,52 @@ public class RecordAudioActivity extends Activity {
             }
         });
 
-        btnStopPlay = (Button)findViewById(R.id.stopPlay);
-        btnStopPlay.setOnClickListener(new OnClickListener() {
+        btnSave = (ImageButton)findViewById(R.id.saveButton);
+        btnSave.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                stopPlay(v);
+                save(v);
             }
         });
     }
 
-    public void start(View view){
-        try {
-            mMediaRecorder.prepare();
-            mMediaRecorder.start();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+    public void record(View view){
+        if (!isRecording) {
+            try {
+                mMediaRecorder.prepare();
+                mMediaRecorder.start();
+                isRecording = true;
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
 
-            e.printStackTrace();
+                e.printStackTrace();
+            }
+            mRecordStatus.setText("Record status: Recording");
+            btnRecordStart.setEnabled(false);
+            btnSave.setEnabled(true);
         }
 
-        mRecordStatus.setText("Record status: now recording");
-        btnRecordStart.setEnabled(false);
-        btnRecordStop.setEnabled(true);
+        else {
+            try {
+                mMediaRecorder.stop();
+                mMediaRecorder.release();
+                mMediaRecorder  = null;
+                isRecording = false;
 
-
-    }
-
-    public void stop(View view){
-        try {
-            mMediaRecorder.stop();
-            mMediaRecorder.release();
-            mMediaRecorder  = null;
-
-            btnRecordStop.setEnabled(false);
-            btnPlay.setEnabled(true);
-            mRecordStatus.setText("Record status: Stopped recording");
-
-
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        } catch (RuntimeException e) {
-            e.printStackTrace();
+                btnSave.setEnabled(false);
+                btnPlay.setEnabled(true);
+                mRecordStatus.setText("Record status: Stopped recording");
+            } catch (IllegalStateException e) {
+                e.printStackTrace();
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+            }
         }
+
+
     }
 
     public void play(View view) {
@@ -127,7 +118,7 @@ public class RecordAudioActivity extends Activity {
             mPlayer.start();
 
             btnPlay.setEnabled(false);
-            btnStopPlay.setEnabled(true);
+            btnSave.setEnabled(true);
             mRecordStatus.setText("Record status: Playing audio");
 
 
@@ -137,15 +128,15 @@ public class RecordAudioActivity extends Activity {
         }
     }
 
-    public void stopPlay(View view) {
+    public void save(View view) {
         try {
             if (mPlayer != null) {
                 mPlayer.stop();
                 mPlayer.release();
                 mPlayer = null;
                 btnPlay.setEnabled(true);
-                btnStopPlay.setEnabled(false);
-                mRecordStatus.setText("Record status: stopped playing");
+                btnSave.setEnabled(false);
+                mRecordStatus.setText("Record status: saved Button");
 
 
             }
