@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -24,6 +25,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
+import android.widget.TableLayout;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,6 +95,7 @@ public class MainActivity extends AppCompatActivity
             container.removeAllViews();
             inflater.inflate(R.layout.content_home, container);
             generateButtons();
+
         }
         else if (id == R.id.nav_myButtons) {
             LayoutInflater inflater = getLayoutInflater();
@@ -118,7 +122,7 @@ public class MainActivity extends AppCompatActivity
 
     public void generateButtons(){
         ArrayList<String> soundList = listAssetFiles("sounds");
-        String[] list = soundList.toArray(new String[soundList.size()]);
+        final String[] list = soundList.toArray(new String[soundList.size()]);
         final MediaPlayer mp = new MediaPlayer();
         for (final String file: list) {
 
@@ -126,15 +130,14 @@ public class MainActivity extends AppCompatActivity
             myButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(mp.isPlaying())
-                    {
+                    if (mp.isPlaying()) {
                         mp.stop();
                     }
                     try {
                         mp.reset();
                         AssetFileDescriptor afd;
-                        afd = getAssets().openFd("sounds/" +file+".mp3");
-                        mp.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
+                        afd = getAssets().openFd("sounds/" + file + ".mp3");
+                        mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
                         mp.prepare();
                         mp.start();
                     } catch (IllegalStateException e) {
@@ -151,6 +154,37 @@ public class MainActivity extends AppCompatActivity
 
             ll.addView(myButton);
         }
+        final SearchView searchView = (SearchView) findViewById(R.id.searchViewHome);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                TableLayout tableLayoutInstance = (TableLayout) findViewById(R.id.buttonlayout);
+                ArrayList<View> touchables = tableLayoutInstance.getTouchables();
+                for(View touchable : touchables){
+                    if( touchable instanceof Button )
+                        ((Button)touchable).setVisibility(View.INVISIBLE);
+                }
+                for (String file:list) {
+                    if (file.contains(newText)){
+                        for (View touchable:touchables) {
+                            if( touchable instanceof Button ){
+                                if(((Button) touchable).getText() == file ){
+                                    touchable.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return false;
+            }
+        });
+
 
 
     }
@@ -274,4 +308,6 @@ public class MainActivity extends AppCompatActivity
         this.startActivity(intent);
         return true;
     }
+
+
 }
