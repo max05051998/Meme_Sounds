@@ -169,30 +169,50 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                TableLayout tableLayoutInstance = (TableLayout) findViewById(R.id.buttonlayout);
-                ArrayList<View> touchables = tableLayoutInstance.getTouchables();
-                for(View touchable : touchables){
-                    if( touchable instanceof Button )
-                        ((Button)touchable).setVisibility(View.INVISIBLE);
-                }
-                for (String file:list) {
-                    if (file.contains(newText)){
-                        for (View touchable:touchables) {
-                            if( touchable instanceof Button ){
-                                if(((Button) touchable).getText() == file ){
-                                    touchable.setVisibility(View.VISIBLE);
+                if (!isStringNullOrWhiteSpace(newText)) {
+                    TableLayout tableLayoutInstance = (TableLayout) findViewById(R.id.buttonlayout);
+                    ArrayList<View> touchables = tableLayoutInstance.getTouchables();
+                    for (View touchable : touchables) {
+                        if (touchable instanceof Button)
+                            ((Button) touchable).setVisibility(View.GONE);
+                    }
+                    for (String file : list) {
+                        if (file.contains(newText)) {
+                            for (View touchable : touchables) {
+                                if (touchable instanceof Button) {
+                                    if (((Button) touchable).getText() == file) {
+                                        touchable.setVisibility(View.VISIBLE);
+                                    }
                                 }
                             }
                         }
                     }
+                } else {
+                    TableLayout tableLayoutInstance = (TableLayout) findViewById(R.id.buttonlayout);
+                    ArrayList<View> touchables = tableLayoutInstance.getTouchables();
+                    for (View touchable : touchables) {
+                        if (touchable instanceof Button)
+                            ((Button) touchable).setVisibility(View.GONE);
+                    }
+                    generateButtons();
                 }
-
-                return false;
+                return true;
             }
         });
+    }
 
+    public static boolean isStringNullOrWhiteSpace(String value) {
+        if (value == null) {
+            return true;
+        }
 
+        for (int i = 0; i < value.length(); i++) {
+            if (!Character.isWhitespace(value.charAt(i))) {
+                return false;
+            }
+        }
 
+        return true;
     }
 
 
