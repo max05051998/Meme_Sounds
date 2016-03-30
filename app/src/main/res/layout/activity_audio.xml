@@ -71,7 +71,8 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentStart="true"
         android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp" />
+        android:layout_marginRight="50dp"
+        android:hint="Enter your Button name here"/>
 
     <TextView
         android:layout_width="wrap_content"

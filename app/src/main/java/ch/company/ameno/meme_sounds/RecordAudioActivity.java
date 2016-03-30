@@ -49,7 +49,7 @@ public class RecordAudioActivity extends Activity {
             Log.e("tag", e.getMessage());
         }
 
-        outputPath = outputPath + "/currentButton.mpeg4";
+        outputPath = outputPath + "/currentButton.mp4";
 
 
         mMediaRecorder = new MediaRecorder();
@@ -122,14 +122,14 @@ public class RecordAudioActivity extends Activity {
     }
 
     public void play(View view) {
-        if (!mMediaPlayer.isPlaying()) {
+        if (!isPlaying) {
             try {
                 mMediaPlayer = new MediaPlayer();
                 mMediaPlayer.setDataSource(outputPath);
                 mMediaPlayer.prepare();
                 mMediaPlayer.start();
                 mRecordStatus.setText("Record status: Playing audio");
-
+                isPlaying = true;
             }
             catch (Exception e) {
                 // TODO Auto-generated catch block
@@ -139,8 +139,9 @@ public class RecordAudioActivity extends Activity {
         else {
             mMediaPlayer.stop();
             mRecordStatus.setText("Record status: Stopped playing");
+            isPlaying = false;
         }
-        mRecordStatus.setText("Record status: Waiting for input");
+        mRecordStatus.setText("");
     }
 
     public void save(View view) {
