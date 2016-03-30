@@ -38,7 +38,7 @@ public class RecordAudioActivity extends Activity {
         setContentView(R.layout.activity_audio);
 
         mRecordStatus = (TextView) findViewById(R.id.tv_recordStatus);
-        mRecordStatus.setText("Record status: Waiting for input");
+        mRecordStatus.setText("Waiting for input");
 
         // store it to sd card
         outputPath = getFilesDir().getAbsolutePath() + "/sounds";
@@ -105,19 +105,24 @@ public class RecordAudioActivity extends Activity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        else {
+        } else {
             if (counter == 1) {
                 mMediaRecorder.stop();
                 mRecordStatus.setText("Record status: Stopped recording");
                 counter++;
-            }
-
-            else {
-                mMediaRecorder.release();
+            } else {
+                mMediaRecorder = null;
                 counter = 0;
                 mRecordStatus.setText("Cleared previous recording!");
-                mMediaPlayer = new MediaPlayer();
+
+                try {
+                    File dir = new File(outputPath);
+                    if (dir.exists()) {
+                        dir.delete();
+                    }
+                } catch (Exception e) {
+                    Log.e("tag", e.getMessage());
+                }
             }
             btnPlay.setEnabled(true);
             btnSave.setEnabled(true);
@@ -133,32 +138,47 @@ public class RecordAudioActivity extends Activity {
                 mMediaPlayer.setDataSource(outputPath);
                 mMediaPlayer.prepare();
                 mMediaPlayer.start();
-                mRecordStatus.setText("Record status: Playing audio");
+                mRecordStatus.setText("Playing audio");
                 isPlaying = true;
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-        }
-        else {
+        } else {
             mMediaPlayer.stop();
-            mRecordStatus.setText("Record status: Stopped playing");
+            mMediaPlayer.release();
+            mRecordStatus.setText("Stopped playing audio");
             isPlaying = false;
         }
         mRecordStatus.setText("Waiting for input");
+
+        mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                isPlaying = false;
+                mRecordStatus.setText("Finished playing audio");
+            }
+        });
     }
 
     public void save(View view) {
 
         EditText buttonName = (EditText) findViewById(R.id.buttonName);
-        movedFile = getFilesDir().getAbsolutePath() + "/sounds/" + buttonName.getText() + ".mp4";
-        try {
-            saveFile();
-            mRecordStatus.setText("Record status: saved Button");
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        if (buttonName.length() == 0) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(RecordAudioActivity.this);
+            builder.setTitle("You did not enter a Button Name!");
+            builder.show();
+        }
+        else {
+            movedFile = getFilesDir().getAbsolutePath() + "/sounds/" + buttonName.getText() + ".mp4";
+
+            try {
+                saveFile();
+                mRecordStatus.setText("Your Button was saved!");
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 
@@ -203,7 +223,7 @@ public class RecordAudioActivity extends Activity {
     @Override
     protected void onDestroy() {
 
-        if(mMediaPlayer!=null) mMediaPlayer.stop();
+        if (mMediaPlayer != null) mMediaPlayer.stop();
         super.onDestroy();
 
     }
