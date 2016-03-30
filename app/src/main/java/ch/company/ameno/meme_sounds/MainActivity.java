@@ -29,6 +29,7 @@ import android.widget.SearchView;
 import android.widget.TableLayout;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
@@ -39,12 +40,16 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    String outputPath;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        outputPath = getFilesDir().getAbsolutePath() + "/sounds";
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -143,9 +148,26 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    private List<File> getListFiles(File parentDir) {
+        ArrayList<File> inFiles = new ArrayList<File>();
+        File[] files = parentDir.listFiles();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                inFiles.addAll(getListFiles(file));
+            } else {
+                if(file.getName().endsWith(".csv")){
+                    inFiles.add(file);
+                }
+            }
+        }
+        return inFiles;
+    }
+
     //Generate all Buttons
     public void generateButtons(){
         ArrayList<String> soundList = listAssetFiles("sounds");
+        File myFilesDir = new File(outputPath);
+        List<File> mySoundsList = getListFiles(myFilesDir);
         final String[] list = soundList.toArray(new String[soundList.size()]);
         final MediaPlayer mp = new MediaPlayer();
         for (final String file: list) {
@@ -162,6 +184,33 @@ public class MainActivity extends AppCompatActivity
                         AssetFileDescriptor afd;
                         afd = getAssets().openFd("sounds/" + file + ".mp3");
                         mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                        mp.prepare();
+                        mp.start();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+            myButton.setText(file);
+
+            LinearLayout ll = (LinearLayout)findViewById(R.id.buttonlayout);
+
+            ll.addView(myButton);
+        }
+        for(final File myFile: mySoundsList) {
+            Button myButton = new Button(this);
+            myButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mp.isPlaying()) {
+                        mp.stop();
+                    }
+                    try {
+                        mp.reset();
+                        mp.setDataSource(myFile.getAbsolutePath());
                         mp.prepare();
                         mp.start();
                     } catch (IllegalStateException e) {
