@@ -43,6 +43,12 @@ public class MainActivity extends AppCompatActivity
     String outputPath;
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        generateButtons();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -341,7 +347,7 @@ public class MainActivity extends AppCompatActivity
             ll.addView(myButton);
         }
     }
-    
+
 
 
     public void loadDataFromAsset(String PictureNameHaP, String PictureNameStM ) {
