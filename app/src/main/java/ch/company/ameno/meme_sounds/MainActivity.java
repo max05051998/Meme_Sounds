@@ -157,11 +157,13 @@ public class MainActivity extends AppCompatActivity
     private List<File> getListFiles(File parentDir) {
         ArrayList<File> inFiles = new ArrayList<>();
         File[] files = parentDir.listFiles();
-        for (File file : files) {
-            if (file.isDirectory()) {
-                //inFiles.addAll(getListFiles(file));
-            } else {
+        if(files!=null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    //inFiles.addAll(getListFiles(file));
+                } else {
                     inFiles.add(file);
+                }
             }
         }
         return inFiles;
