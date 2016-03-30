@@ -216,10 +216,9 @@ public class MainActivity extends AppCompatActivity
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
                 }
             });
-            myButton.setText(myFile.getName());
+            myButton.setText(myFile.getName().substring(0, myFile.getName().lastIndexOf('.')));
 
             LinearLayout ll = (LinearLayout)findViewById(R.id.buttonlayout);
 
@@ -312,24 +311,20 @@ public class MainActivity extends AppCompatActivity
 
     //generate Buttons  for My Buttons Page
     public void generateMyButtons(){
-        ArrayList<String> soundList = listAssetFilesMyButtons("sounds");
-        String[] list = soundList.toArray(new String[soundList.size()]);
+        File myFilesDir = new File(outputPath);
+        List<File> mySoundsList = getListFiles(myFilesDir);
         final MediaPlayer mp = new MediaPlayer();
-        for (final String file: list) {
-
+        for(final File myFile: mySoundsList) {
             Button myButton = new Button(this);
             myButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(mp.isPlaying())
-                    {
+                    if (mp.isPlaying()) {
                         mp.stop();
                     }
                     try {
                         mp.reset();
-                        AssetFileDescriptor afd;
-                        afd = getAssets().openFd("sounds/" +file+".mp3");
-                        mp.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
+                        mp.setDataSource(myFile.getAbsolutePath());
                         mp.prepare();
                         mp.start();
                     } catch (IllegalStateException e) {
@@ -337,40 +332,16 @@ public class MainActivity extends AppCompatActivity
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-
                 }
             });
-            myButton.setText(file);
+            myButton.setText(myFile.getName().substring(0, myFile.getName().lastIndexOf('.')));
 
             LinearLayout ll = (LinearLayout)findViewById(R.id.buttonlayout);
 
             ll.addView(myButton);
         }
-
-
     }
-
-
-//list asset files for my Button Page
-    private ArrayList listAssetFilesMyButtons(String path){
-        ArrayList<String> soundList = new ArrayList<>();
-        String[] list = null;
-        try {
-            list = getAssets().list(path);
-
-            soundList = new ArrayList<>();
-            for (int i = 0; i< list.length; i++)
-            {
-                if(list[i].endsWith("_myButtons.mp3")) {
-                    soundList.add(list[i].substring(0, list[i].lastIndexOf('.')));
-                }
-            }
-        }
-        catch (IOException e) {
-
-        }
-        return soundList;
-    }
+    
 
 
     public void loadDataFromAsset(String PictureNameHaP, String PictureNameStM ) {
