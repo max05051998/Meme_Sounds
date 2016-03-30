@@ -60,6 +60,23 @@ public class MainActivity extends AppCompatActivity
         container.removeAllViews();
         inflater.inflate(R.layout.content_home, container);
         generateButtons();
+        generateSearchView();
+    }
+
+    private void generateSearchView() {
+        final SearchView searchView = (SearchView) findViewById(R.id.searchViewHome);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                generateButtons(newText);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -126,6 +143,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    //Generate all Buttons
     public void generateButtons(){
         ArrayList<String> soundList = listAssetFiles("sounds");
         final String[] list = soundList.toArray(new String[soundList.size()]);
@@ -160,63 +178,50 @@ public class MainActivity extends AppCompatActivity
 
             ll.addView(myButton);
         }
-        final SearchView searchView = (SearchView) findViewById(R.id.searchViewHome);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (!isStringNullOrWhiteSpace(newText)) {
-                    TableLayout tableLayoutInstance = (TableLayout) findViewById(R.id.buttonlayout);
-                    ArrayList<View> touchables = tableLayoutInstance.getTouchables();
-                    for (View touchable : touchables) {
-                        if (touchable instanceof Button)
-                            ((Button) touchable).setVisibility(View.GONE);
+    }
+
+    //Generate Just the Buttons that were searched
+    public void generateButtons(String searchText){
+        LinearLayout ll = (LinearLayout)findViewById(R.id.buttonlayout);
+        ll.removeAllViews();
+        ArrayList<String> soundList = listAssetFiles("sounds", searchText);
+        final String[] list = soundList.toArray(new String[soundList.size()]);
+        final MediaPlayer mp = new MediaPlayer();
+        for (final String file: list) {
+
+            Button myButton = new Button(this);
+            myButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mp.isPlaying()) {
+                        mp.stop();
                     }
-                    for (String file : list) {
-                        if (file.contains(newText)) {
-                            for (View touchable : touchables) {
-                                if (touchable instanceof Button) {
-                                    if (((Button) touchable).getText() == file) {
-                                        touchable.setVisibility(View.VISIBLE);
-                                    }
-                                }
-                            }
-                        }
+                    try {
+                        mp.reset();
+                        AssetFileDescriptor afd;
+                        afd = getAssets().openFd("sounds/" + file + ".mp3");
+                        mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                        mp.prepare();
+                        mp.start();
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                } else {
-                    TableLayout tableLayoutInstance = (TableLayout) findViewById(R.id.buttonlayout);
-                    ArrayList<View> touchables = tableLayoutInstance.getTouchables();
-                    for (View touchable : touchables) {
-                        if (touchable instanceof Button)
-                            ((Button) touchable).setVisibility(View.GONE);
-                    }
-                    generateButtons();
+
                 }
-                return true;
-            }
-        });
-    }
+            });
+            myButton.setText(file);
 
-    public static boolean isStringNullOrWhiteSpace(String value) {
-        if (value == null) {
-            return true;
+
+
+            ll.addView(myButton);
         }
 
-        for (int i = 0; i < value.length(); i++) {
-            if (!Character.isWhitespace(value.charAt(i))) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
-
-
+    //List Asset Files for all Buttons
     private ArrayList listAssetFiles(String path) {
         ArrayList<String> soundList = new ArrayList<>();
         String[] list = null;
@@ -237,6 +242,28 @@ public class MainActivity extends AppCompatActivity
         return soundList;
     }
 
+    //List only Asset Files that are relevant for search
+    private ArrayList listAssetFiles(String path, String searchTerm) {
+        ArrayList<String> soundList = new ArrayList<>();
+        String[] list = null;
+        try {
+            list = getAssets().list(path);
+
+            soundList = new ArrayList<>();
+            for (int i = 0; i< list.length; i++)
+            {
+                if(list[i].endsWith("mp3")&&list[i].contains(searchTerm.toUpperCase())) {
+                    soundList.add(list[i].substring(0, list[i].lastIndexOf('.')));
+                }
+            }
+        }
+        catch (IOException e) {
+
+        }
+        return soundList;
+    }
+
+    //generate Buttons  for My Buttons Page
     public void generateMyButtons(){
         ArrayList<String> soundList = listAssetFilesMyButtons("sounds");
         String[] list = soundList.toArray(new String[soundList.size()]);
@@ -277,7 +304,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
+//list asset files for my Button Page
     private ArrayList listAssetFilesMyButtons(String path){
         ArrayList<String> soundList = new ArrayList<>();
         String[] list = null;
