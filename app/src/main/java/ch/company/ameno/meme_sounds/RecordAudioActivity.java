@@ -52,12 +52,11 @@ public class RecordAudioActivity extends Activity {
 
         outputPath = outputPath + "/currentButton.mp4";
 
-
-        mMediaRecorder = new MediaRecorder();
-        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
-        mMediaRecorder.setOutputFile(outputPath);
+//        mMediaRecorder = new MediaRecorder();
+//        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+//        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+//        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+//        mMediaRecorder.setOutputFile(outputPath);
 
         btnRecordStart = (ImageButton) findViewById(R.id.record);
         btnRecordStart.setOnClickListener(new OnClickListener() {
@@ -91,8 +90,9 @@ public class RecordAudioActivity extends Activity {
     }
 
     public void record(View view) {
-        if (!isRecording) {
+        if (mMediaRecorder == null) {
             try {
+                initializeMR();
                 mMediaRecorder.prepare();
                 mMediaRecorder.start();
                 isRecording = true;
@@ -105,7 +105,8 @@ public class RecordAudioActivity extends Activity {
                 e.printStackTrace();
             }
             mRecordStatus.setText("Record status: Recording!");
-        } else {
+        }
+        else {
             try {
                 mMediaRecorder.stop();
                 mRecordStatus.setText("Record status: Stopped recording");
@@ -163,6 +164,14 @@ public class RecordAudioActivity extends Activity {
         File to = new File(movedFile);
         from.renameTo(to);
         isSaved = true;
+    }
+
+    public void initializeMR() {
+        mMediaRecorder = new MediaRecorder();
+        mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.DEFAULT);
+        mMediaRecorder.setOutputFile(outputPath);
     }
 
     @Override
