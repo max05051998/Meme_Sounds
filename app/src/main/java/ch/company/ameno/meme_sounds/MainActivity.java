@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity
         RelativeLayout container = (RelativeLayout) findViewById(R.id.container);
         container.removeAllViews();
         inflater.inflate(R.layout.content_home, container);
-        generateButtons();
         generateSearchView();
     }
 
