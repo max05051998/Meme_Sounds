@@ -30,6 +30,7 @@ public class RecordAudioActivity extends Activity {
     private boolean isRecording = false;
     private boolean isPlaying = false;
     private boolean isSaved = false;
+    private int counter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,27 +96,29 @@ public class RecordAudioActivity extends Activity {
                 initializeMR();
                 mMediaRecorder.prepare();
                 mMediaRecorder.start();
-                isRecording = true;
                 btnPlay.setEnabled(false);
                 btnSave.setEnabled(false);
-
+                counter++;
+                mRecordStatus.setText("Record status: Recording!");
             } catch (IllegalStateException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            mRecordStatus.setText("Record status: Recording!");
         }
         else {
-            try {
+            if (counter == 1) {
                 mMediaRecorder.stop();
                 mRecordStatus.setText("Record status: Stopped recording");
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-            } catch (RuntimeException e) {
-                e.printStackTrace();
+                counter++;
             }
-            isRecording = false;
+
+            else {
+                mMediaRecorder.release();
+                counter = 0;
+                mRecordStatus.setText("Cleared previous recording!");
+                mMediaPlayer = new MediaPlayer();
+            }
             btnPlay.setEnabled(true);
             btnSave.setEnabled(true);
         }
@@ -143,7 +146,7 @@ public class RecordAudioActivity extends Activity {
             mRecordStatus.setText("Record status: Stopped playing");
             isPlaying = false;
         }
-        mRecordStatus.setText("");
+        mRecordStatus.setText("Waiting for input");
     }
 
     public void save(View view) {
