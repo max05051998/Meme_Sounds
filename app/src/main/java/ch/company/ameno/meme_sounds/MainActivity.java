@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        outputPath = getFilesDir().getAbsolutePath() + "/sounds";
+        outputPath = getFilesDir().getAbsolutePath() + "/sounds/";
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -153,11 +153,9 @@ public class MainActivity extends AppCompatActivity
         File[] files = parentDir.listFiles();
         for (File file : files) {
             if (file.isDirectory()) {
-                inFiles.addAll(getListFiles(file));
+                //inFiles.addAll(getListFiles(file));
             } else {
-                if(file.getName().endsWith(".csv")){
                     inFiles.add(file);
-                }
             }
         }
         return inFiles;
@@ -221,7 +219,7 @@ public class MainActivity extends AppCompatActivity
 
                 }
             });
-            myButton.setText(file);
+            myButton.setText(myFile.getName());
 
             LinearLayout ll = (LinearLayout)findViewById(R.id.buttonlayout);
 

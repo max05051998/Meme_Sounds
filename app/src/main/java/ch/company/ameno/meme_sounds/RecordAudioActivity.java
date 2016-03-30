@@ -3,6 +3,7 @@ package ch.company.ameno.meme_sounds;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -165,13 +166,33 @@ public class RecordAudioActivity extends Activity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mMediaPlayer.stop();
-
+    public void onBackPressed() {
         if (!isSaved) {
             AlertDialog.Builder builder = new AlertDialog.Builder(RecordAudioActivity.this);
             builder.setTitle("Are you sure you want to quit without saving?");
+            builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            });
+            builder.setNegativeButton("no", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            builder.show();
+            return;
         }
+        super.onBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        if(mMediaPlayer!=null) mMediaPlayer.stop();
+        super.onDestroy();
+
     }
 }
